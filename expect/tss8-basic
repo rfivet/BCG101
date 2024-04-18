@@ -1,0 +1,53 @@
+#!/usr/bin/expect --
+# tss8-basic -- start a BASIC session on tss8 by uploading a file
+# Copyright (c) 2021-2024 Renaud Fivet
+
+if { $argv == "" } exit
+if [catch { set file [open $argv "r"]}] { puts $input ; exit }
+close $file
+
+spawn telnet 192.168.1.6 4000
+#log_file session.log
+set timeout 10
+expect "TTIX device, line " { sleep 1 ; send "\002s\r" }
+while 1 {
+    expect {
+        "LOGIN PLEASE\r\n." { send "login 2003 tss8\r" ; break }
+        "\r\n."   { send "KJ\r" }
+        timeout { send "\002s\r" }
+    }
+}
+
+expect "\r\n\r\n."
+send "r basic\r"
+expect "NEW OR OLD--" { send "new\r"}
+expect "NEW PROGRAM NAME--" { send "upload\r"}
+expect "READY\r\n\r\n" {
+    set file [open $argv]
+    while 1 {
+        if {[gets $file line] == -1} break
+        set line [string trimleft $line]
+        set line [string toupper $line]
+        set len [string length $line]
+        while {$len > 40} {
+            set outs [string range $line 0 39]
+            set line [string range $line 40 end]
+            incr len -40
+            send -- $outs
+            expect -ex $outs
+        }
+
+        if {$len > 0} {
+            send -- $line
+            expect -ex $line
+        }
+
+        send "\r"
+        expect "\r\r\n"
+    }
+
+    close $file
+}
+
+puts ">>>"
+interact
