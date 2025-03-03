@@ -1,0 +1,57 @@
+#!/usr/bin/expect --
+# rsts-basic -- start a BASIC PLUS session on RSTS/E uploading a file
+# Copyright (c) 2021-2025 Renaud Fivet
+
+set file_f [expr { $argv != ""}]
+if { $file_f} {
+    if [catch { set file [open $argv "r"]}] { puts "can't open $argv." ; exit }
+    close $file
+}
+
+#spawn telnet pingouin.local 4000
+spawn telnet elvira.stacken.kth.se 4000
+#log_file session.log
+set timeout 5
+expect "<Dial-up>" { sleep 1 }
+
+while 1 {
+    expect {
+        "User: " { send "99,99\r" ; break }
+        timeout { send "\r" ; sleep 1 ; send "\r" ; puts "." }
+    }
+}
+
+expect "Password: " { send "user\r" }
+#expect "\r\n\r\n$ " { send "BASIC/BPLUS\r" }
+expect "Ready\r\n\n" { send "NOEXTEND\r" }
+expect "Ready\r\n\n" {
+    if { $file_f } {
+        set file [open $argv]
+        while 1 {
+            if {[gets $file line] == -1} break
+            set line [string trimleft $line]
+            set line [string toupper $line]
+            set len [string length $line]
+            while {$len > 40} {
+                set outs [string range $line 0 39]
+                set line [string range $line 40 end]
+                incr len -40
+                send -- $outs
+                expect -ex $outs
+            }
+
+            if {$len > 0} {
+                send -- $line
+                expect -ex $line
+            }
+
+            send "\r"
+            expect "\r\n"
+        }
+
+        close $file
+    }
+}
+
+puts ">>>"
+interact
