@@ -1,0 +1,3 @@
+###BASIC-PLUS mode
+* FIPFOP    EXTEND
+* SALVO     NOEXTEND
