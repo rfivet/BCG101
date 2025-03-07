@@ -1,6 +1,6 @@
 #!/usr/bin/expect --
 # rsts-basic -- start a BASIC PLUS session on RSTS/E uploading a file
-# Copyright (c) 2021-2025 Renaud Fivet
+# Copyright (c) 2025 Renaud Fivet
 
 set file_f [expr { $argv != ""}]
 if { $file_f} {
@@ -22,8 +22,7 @@ while 1 {
 }
 
 expect "Password: " { send "user\r" }
-#expect "\r\n\r\n$ " { send "BASIC/BPLUS\r" }
-expect "Ready\r\n\n" { send "NOEXTEND\r" }
+#expect "Ready\r\n\n" { send "NOEXTEND\r" }
 expect "Ready\r\n\n" {
     if { $file_f } {
         set file [open $argv]

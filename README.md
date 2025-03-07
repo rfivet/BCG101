@@ -8,9 +8,12 @@ spellings and formatting.
 
 * port: listings after quick port to TSS8 EduSystem 50 BASIC.
 
+* rsts-e: listings after check on RSTS/E BASIC/BPLUS.
+
 * factory: refactoring of some of the TSS8 ported version.
 
-* expect: script used to upload the source to the emulated TSS8 over telnet.
+* expect: scripts used to upload the source to the emulated TSS8 or RSTS/E over
+telnet.
 
 ### Warnings
 
