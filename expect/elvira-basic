@@ -23,6 +23,7 @@ while 1 {
 
 expect "Password: " { send "user\r" }
 #expect "Ready\r\n\n" { send "NOEXTEND\r" }
+expect "Ready\r\n\n" { send "SET WIDTH 132\r" }
 expect "Ready\r\n\n" {
     if { $file_f } {
         set file [open $argv]
