@@ -227,5 +227,5 @@
 2320 GO TO 1350
 2330 PRINT
 2340 PRINT
-2350 PRINT "                      BY A. COM PUTER."
+2350 PRINT "                      BY  A. COM PUTER."
 2360 END
