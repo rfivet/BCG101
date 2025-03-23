@@ -227,5 +227,5 @@
 2032 GO TO 1350
 2033 PRINT
 2034 PRINT
-2035 PRINT "                      BY A. COM PUTER."
+2035 PRINT "                      BY  A. COM PUTER."
 2036 END
