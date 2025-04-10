@@ -27,26 +27,39 @@ expect "Ready\r\n\n" { send "SET WIDTH 132\r" }
 expect "Ready\r\n\n" {
     if { $file_f } {
         set file [open $argv]
-        while 1 {
-            if {[gets $file line] == -1} break
+        if {[gets $file line] != -1} {
             set line [string trimleft $line]
-            set line [string toupper $line]
-            set len [string length $line]
-            while {$len > 40} {
-                set outs [string range $line 0 39]
-                set line [string range $line 40 end]
-                incr len -40
-                send -- $outs
-                expect -ex $outs
-            }
+            while 1 {
+                set line [string toupper $line]
+                set len [string length $line]
+                while {$len > 40} {
+                    set outs [string range $line 0 39]
+                    set line [string range $line 40 end]
+                    incr len -40
+                    send -- $outs
+                    expect -ex $outs
+                }
 
-            if {$len > 0} {
-                send -- $line
-                expect -ex $line
-            }
+                if {$len > 0} {
+                    send -- $line
+                    expect -ex $line
+                }
 
-            send "\r"
-            expect "\r\n"
+                if {[gets $file line] == -1} {
+                    send "\r"
+                    expect "\r\n"
+                    break
+                }
+
+                if {[regexp {^( *)([0-9]+)} $line]} {
+                    set line [string trimleft $line]
+                    send "\r"
+                } else {
+                    send "\n"
+                }
+
+                expect "\r\n"
+            }
         }
 
         close $file
